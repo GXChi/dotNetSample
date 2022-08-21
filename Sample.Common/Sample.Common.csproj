@@ -86,8 +86,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Helper\AESHelper.cs" />
     <Compile Include="Helper\CacheHelper.cs" />
     <Compile Include="Helper\DateHelper.cs" />
+    <Compile Include="Helper\RSA2Helper.cs" />
     <Compile Include="Helper\RSAHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

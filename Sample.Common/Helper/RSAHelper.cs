@@ -336,7 +336,7 @@ namespace Sample.Common.Helper
         /// </summary>
         /// <param name="publicKey"></param>
         /// <returns></returns>
-        private static string RSAPublicKeyJava2DotNet(string publicKey)
+        public static string RSAPublicKeyJava2DotNet(string publicKey)
         {
             RsaKeyParameters publicKeyParam = (RsaKeyParameters)PublicKeyFactory.CreateKey(Convert.FromBase64String(publicKey));
             return string.Format("<RSAKeyValue><Modulus>{0}</Modulus><Exponent>{1}</Exponent></RSAKeyValue>",
@@ -357,7 +357,7 @@ namespace Sample.Common.Helper
         /// </summary>
         /// <param name="xmlKeys">私钥</param>
         /// <param name="xmlPublicKey">公钥</param>
-        public void RSAKey(out string xmlKeys, out string xmlPublicKey)
+        public static void RSAKey(out string xmlKeys, out string xmlPublicKey)
         {
             try
             {
@@ -385,7 +385,7 @@ namespace Sample.Common.Helper
         /// <param name="xmlPublicKey">公钥</param>
         /// <param name="encryptString">待加密的字符串</param>
         /// <returns></returns>
-        public string RSAEncrypt(string xmlPublicKey, string encryptString)
+        public static string RSAEncrypt(string xmlPublicKey, string encryptString)
         {
             try
             {
@@ -410,7 +410,7 @@ namespace Sample.Common.Helper
         /// <param name="xmlPublicKey">公钥</param>
         /// <param name="EncryptString">待加密的字节数组</param>
         /// <returns></returns>
-        public string RSAEncrypt(string xmlPublicKey, byte[] EncryptString)
+        public static string RSAEncrypt(string xmlPublicKey, byte[] EncryptString)
         {
             try
             {
@@ -436,7 +436,7 @@ namespace Sample.Common.Helper
         /// <param name="xmlPrivateKey">私钥</param>
         /// <param name="decryptString">待解密的字符串</param>
         /// <returns></returns>
-        public string RSADecrypt(string xmlPrivateKey, string decryptString)
+        public static string RSADecrypt(string xmlPrivateKey, string decryptString)
         {
             try
             {
@@ -461,7 +461,7 @@ namespace Sample.Common.Helper
         /// <param name="xmlPrivateKey">私钥</param>
         /// <param name="DecryptString">待解密的字节数组</param>
         /// <returns></returns>
-        public string RSADecrypt(string xmlPrivateKey, byte[] DecryptString)
+        public static string RSADecrypt(string xmlPrivateKey, byte[] DecryptString)
         {
             try
             {
@@ -491,7 +491,7 @@ namespace Sample.Common.Helper
         /// <param name="strSource">待签名的字符串</param>
         /// <param name="HashData">Hash描述</param>
         /// <returns></returns>
-        public bool GetHash(string strSource, ref byte[] HashData)
+        public static bool GetHash(string strSource, ref byte[] HashData)
         {
             try
             {
@@ -513,7 +513,7 @@ namespace Sample.Common.Helper
         /// <param name="strSource">待签名的字符串</param>
         /// <param name="strHashData">Hash描述</param>
         /// <returns></returns>
-        public bool GetHash(string strSource, ref string strHashData)
+        public static bool GetHash(string strSource, ref string strHashData)
         {
             try
             {

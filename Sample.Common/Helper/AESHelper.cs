@@ -10,6 +10,62 @@ namespace Sample.Common.Helper
 {
     public class AESHelper
     {
+
+        /// <summary>
+        /// AES加密 (128-ECB加密模式)
+        /// </summary>
+        /// <param name="toEncrypt">内容</param>
+        /// <param name="secretKey">秘钥</param>
+        /// <returns></returns>
+        public static string AESEncrypt(string toEncrypt, string secretKey)
+        {
+            byte[] toEncryptArray = Encoding.UTF8.GetBytes(toEncrypt);
+            byte[] keyArray = Convert.FromBase64String(secretKey);
+            //byte[] outputb = Convert.FromBase64String("Q3xNHuj9JJu1EGQnJnzIDA==");
+
+            RijndaelManaged rDel = new RijndaelManaged();
+            rDel.Key = keyArray;
+            rDel.Mode = CipherMode.ECB;
+            rDel.Padding = PaddingMode.PKCS7;
+
+            ICryptoTransform cTransform = rDel.CreateEncryptor();
+            byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+
+            return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+        }
+
+        /// <summary>
+        /// AES解密(128-ECB加密模式)
+        /// </summary>
+        /// <param name="toDecrypt">密文</param>
+        /// <param name="secretKey">秘钥(Base64String)</param>
+        /// <returns></returns>
+        public static string AESDecrypt(string toDecrypt, string secretKey)
+        {
+            try
+            {
+                byte[] toEncryptArray = Convert.FromBase64String(toDecrypt);
+                byte[] keyArray = Convert.FromBase64String(secretKey); //128bit
+
+                RijndaelManaged rDel = new RijndaelManaged();
+                rDel.Key = keyArray; //获取或设置对称算法的密钥
+                rDel.Mode = CipherMode.ECB; //获取或设置对称算法的运算模式，必须设置为ECB  
+                rDel.Padding = PaddingMode.PKCS7; //获取或设置对称算法中使用的填充模式，必须设置为PKCS7  
+                ICryptoTransform cTransform = rDel.CreateDecryptor(); //用当前的 Key 属性和初始化向量 (IV) 建立对称解密器对象
+
+                byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+                return Encoding.UTF8.GetString(resultArray);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+
+
+
         /// <summary>
         /// AES加密
         /// </summary>

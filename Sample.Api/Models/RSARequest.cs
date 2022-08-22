@@ -11,8 +11,11 @@ namespace Sample.Web.Models
 
         public string publicKey { get; set; }
 
-        public string data { get; set; }
+        public HeartBeat data { get; set; }
 
         public string sign { get; set; }
     }
+
+
+
 }

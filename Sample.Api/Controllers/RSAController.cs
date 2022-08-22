@@ -54,9 +54,9 @@ namespace Sample.Web.Controllers
         /// <returns></returns>
         [Route("RSA/RSAEncrypt")]
         [HttpPost]
-        public dynamic RSAEncrypt([FromBody]RSARequest model)
+        public dynamic RSAEncrypt([FromBody] RSARequest model)
         {
-            return RSACryption.RSAEncrypt(model.publicKey, model.data);
+            return RSACryption.RSAEncrypt(model.publicKey, JsonHelper.JsonSerializer(model.data));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Sample.Web.Controllers
         [HttpPost]
         public dynamic RSADecrypt([FromBody] RSARequest model)
         {
-            return RSACryption.RSADecrypt(model.privateKey, model.data);
+            return RSACryption.RSADecrypt(model.privateKey, JsonHelper.JsonSerializer(model.data));
         }
 
         /// <summary>
@@ -82,12 +82,21 @@ namespace Sample.Web.Controllers
         [HttpPost]
         public dynamic SignatureFormatter([FromBody] RSARequest model)
         {
-            string dataHash = "";
-            RSACryption.GetHash(model.data, ref dataHash);
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("app_id", "1111");
+            dictionary.Add("timestamp", "2222");
+            dictionary.Add("data", "ve+DUAOwfJekg5TPhyzSqQZVYQ67QnnyLlc+qS0umOJ2/vPe63vts7VogKaQtxy7G3c5CfaEtLJ/QhNEUAXgsOQ6UM7s+se8H/Y2lcZgKWSADGQzIsVoEf+VclR20OJAxFIaQzMBjSP6lSyj5/LaEAJLSFHtIyUKDQ4sUdFtTNI=");
+            //排序拼接验签数据
+            var signData = RSACryption.Sort(dictionary);
 
-            string result = "";
-            RSACryption.SignatureFormatter(model.privateKey, dataHash, ref result);
-            return new { model.data, result };
+
+            string dataHash = "";
+            RSACryption.GetHash(signData, ref dataHash);
+
+            string sign = "";
+            RSACryption.SignatureFormatter(model.privateKey, dataHash, ref sign);
+            //var resdata = JsonHelper.JsonSerializer(model.data);
+            return new { signData, sign };
         }
 
         /// <summary>
@@ -102,7 +111,7 @@ namespace Sample.Web.Controllers
         public dynamic SignatureDeformatter([FromBody] RSARequest model)
         {
             string dataHash = "";
-            RSACryption.GetHash(model.data, ref dataHash);
+            RSACryption.GetHash(JsonHelper.JsonSerializer(model.data), ref dataHash);
             if (RSACryption.SignatureDeformatter(model.publicKey, dataHash, model.sign))
                 return "验签成功！";
             return "验签失败！";

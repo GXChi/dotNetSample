@@ -344,7 +344,6 @@ namespace Sample.Common.Helper
                 Convert.ToBase64String(publicKeyParam.Exponent.ToByteArrayUnsigned()));
         }
 
-
     }
 
     public class RSACryption
@@ -830,5 +829,27 @@ namespace Sample.Common.Helper
 
         #endregion
 
+        #region 排序
+        public static string Sort(Dictionary<string, string> dictionary)
+        {
+            // 第一步：把字典按Key的字母顺序排序
+            IDictionary<string, string> sortedParams = new SortedDictionary<string, string>(dictionary);
+            IEnumerator<KeyValuePair<string, string>> dem = sortedParams.GetEnumerator();
+            // 第二步：把所有参数名和参数值串在一起
+            StringBuilder query = new StringBuilder("");
+            while (dem.MoveNext())
+            {
+                string key = dem.Current.Key;
+                string value = dem.Current.Value;
+                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+                {
+                    query.Append(key).Append("=").Append(value).Append("&");
+                }
+            }
+            string content = query.ToString().Substring(0, query.Length - 1);
+
+            return content;
+        }
+        #endregion
     }
 }

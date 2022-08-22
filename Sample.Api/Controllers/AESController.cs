@@ -23,14 +23,15 @@ namespace Sample.Web.Controllers
         [HttpPost]
         public dynamic AesEncrypt([FromBody] AESRequest model)
         {
-            byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(model.data);
-            var result2 = AESHelper.AesEncrypt(model.data, model.secretKey, model.vector);
-            var result1 = AESHelper.AesEncrypt(model.data, model.secretKey);
-            return new { result1, result2 };
+            //byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(model.data);
+            //var result2 = AESHelper.AesEncrypt(model.data, model.secretKey, model.vector);
+            //var result1 = AESHelper.AesEncrypt(model.data, model.secretKey);
+            var result = AESHelper.AESEncrypt(JsonHelper.JsonSerializer(model.data), model.secretKey);
+            return new { result };
         }
 
         /// <summary>
-        /// aes加密
+        /// aes解密
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -38,9 +39,9 @@ namespace Sample.Web.Controllers
         [HttpPost]
         public dynamic AesDecypt([FromBody] AESRequest model)
         {
-            var dataByte = Convert.FromBase64String(model.data);
-            var result1 = AESHelper.AesDecypt(model.data, model.secretKey);
-            var result2 = AESHelper.AesDecrypt(model.data, model.secretKey, model.vector);
+            var dataByte = Convert.FromBase64String(model.data.ToString());
+            var result1 = AESHelper.AesDecypt(model.data.ToString(), model.secretKey);
+            var result2 = AESHelper.AesDecrypt(model.data.ToString(), model.secretKey, model.vector);
             return new { result1, result2 };
         }
 

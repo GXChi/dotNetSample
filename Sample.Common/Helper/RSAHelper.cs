@@ -483,22 +483,36 @@ namespace Sample.Common.Helper
 
         #region RSA数字签名
 
-        #region 获取Hash描述表        
+        #region 获取Hash描述表
         /// <summary>
-        /// 获取Hash描述表
+        /// 获取Hash描述
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="encoding">Encoding（UTF-8，GB2312）</param>
+        /// <param name="hashName">hash名称(MD5,SHA256)</param>
+        /// <returns>Base64Hash描述</returns>
+        public static string GetHash(string data, string hashName = "MD5", string encoding = "UTF-8")
+        {
+            var buffer = Encoding.GetEncoding(encoding).GetBytes(data);
+            HashAlgorithm hashAlgorithm = HashAlgorithm.Create(hashName);
+            var hashData = hashAlgorithm.ComputeHash(buffer);
+            return Convert.ToBase64String(hashData);
+        }
+
+        /// <summary>
+        /// 获取SHA256Hash描述表
         /// </summary>
         /// <param name="strSource">待签名的字符串</param>
-        /// <param name="HashData">Hash描述</param>
+        /// <param name="strHashData">Hash描述</param>
         /// <returns></returns>
-        public static bool GetHash(string strSource, ref byte[] HashData)
+        public static string GetSHA256Hash(string data, string encoding = "UTF-8")
         {
             try
             {
-                byte[] Buffer;
-                System.Security.Cryptography.HashAlgorithm MD5 = System.Security.Cryptography.HashAlgorithm.Create("MD5");
-                Buffer = System.Text.Encoding.GetEncoding("GB2312").GetBytes(strSource);
-                HashData = MD5.ComputeHash(Buffer);
-                return true;
+                byte[] bt = Encoding.GetEncoding(encoding).GetBytes(data);
+                var sha256 = new SHA256CryptoServiceProvider();
+                byte[] rgbHash = sha256.ComputeHash(bt);
+                return Convert.ToBase64String(rgbHash);
             }
             catch (Exception ex)
             {
@@ -507,23 +521,19 @@ namespace Sample.Common.Helper
         }
 
         /// <summary>
-        /// 获取Hash描述表
+        /// 获取MD5Hash描述表
         /// </summary>
         /// <param name="strSource">待签名的字符串</param>
         /// <param name="strHashData">Hash描述</param>
         /// <returns></returns>
-        public static bool GetHash(string strSource, ref string strHashData)
+        public static string GetMD5Hash(string data, string encoding = "UTF-8")
         {
             try
             {
-                //从字符串中取得Hash描述 
-                byte[] Buffer;
-                byte[] HashData;
-                System.Security.Cryptography.HashAlgorithm MD5 = System.Security.Cryptography.HashAlgorithm.Create("MD5");
-                Buffer = System.Text.Encoding.GetEncoding("GB2312").GetBytes(strSource);
-                HashData = MD5.ComputeHash(Buffer);
-                strHashData = Convert.ToBase64String(HashData);
-                return true;
+                var buffer = Encoding.GetEncoding(encoding).GetBytes(data);
+                HashAlgorithm hashAlgorithm = HashAlgorithm.Create("MD5");
+                var hashData = hashAlgorithm.ComputeHash(buffer);
+                return Convert.ToBase64String(hashData);
             }
             catch (Exception ex)
             {
@@ -535,17 +545,18 @@ namespace Sample.Common.Helper
         /// 获取Hash描述表
         /// </summary>
         /// <param name="objFile">待签名的文件</param>
-        /// <param name="HashData">Hash描述</param>
+        /// <param name="hashName">hash名称(MD5,SHA256)</param>
         /// <returns></returns>
-        public bool GetHash(System.IO.FileStream objFile, ref byte[] HashData)
+        public static string GetMD5Hash(System.IO.FileStream objFile, string hashName = "MD5")
         {
             try
             {
                 //从文件中取得Hash描述 
-                System.Security.Cryptography.HashAlgorithm MD5 = System.Security.Cryptography.HashAlgorithm.Create("MD5");
-                HashData = MD5.ComputeHash(objFile);
+                byte[] HashData;
+                HashAlgorithm hashAlgorithm = System.Security.Cryptography.HashAlgorithm.Create(hashName);
+                HashData = hashAlgorithm.ComputeHash(objFile);
                 objFile.Close();
-                return true;
+                return Convert.ToBase64String(HashData);
             }
             catch (Exception ex)
             {
@@ -553,32 +564,38 @@ namespace Sample.Common.Helper
             }
         }
 
-        /// <summary>
-        /// 获取Hash描述表
-        /// </summary>
-        /// <param name="objFile">待签名的文件</param>
-        /// <param name="strHashData">Hash描述</param>
-        /// <returns></returns>
-        public bool GetHash(System.IO.FileStream objFile, ref string strHashData)
-        {
-            try
-            {
-                //从文件中取得Hash描述 
-                byte[] HashData;
-                System.Security.Cryptography.HashAlgorithm MD5 = System.Security.Cryptography.HashAlgorithm.Create("MD5");
-                HashData = MD5.ComputeHash(objFile);
-                objFile.Close();
-                strHashData = Convert.ToBase64String(HashData);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
         #endregion
 
         #region RSA签名
+
+        /// <summary>
+        /// RSA签名
+        /// </summary>
+        /// <param name="xmlPrivateKey">私钥</param>
+        /// <param name="HashbyteSignature">待签名Hash描述</param>
+        /// <param name="EncryptedSignatureData">签名后的结果</param>
+        /// <returns></returns>
+        public static string CreateSignature(string xmlPrivateKey, string HashData, string hashName = "MD5")
+        {
+            try
+            {
+                RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+                RSA.FromXmlString(xmlPrivateKey);
+                RSAPKCS1SignatureFormatter RSAFormatter = new RSAPKCS1SignatureFormatter(RSA);
+                RSAFormatter.SetHashAlgorithm(hashName);
+                //执行签名 
+                var dataBase64 = Convert.FromBase64String(HashData);
+                var rgbHash = RSAFormatter.CreateSignature(dataBase64);
+                return Convert.ToBase64String(rgbHash);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
         /// <summary>
         /// RSA签名
         /// </summary>
@@ -672,7 +689,7 @@ namespace Sample.Common.Helper
         /// <param name="strHashbyteSignature">待签名Hash描述</param>
         /// <param name="strEncryptedSignatureData">签名后的结果</param>
         /// <returns></returns>
-        public static bool SignatureFormatter(string strKeyPrivate, string strHashbyteSignature, ref string strEncryptedSignatureData)
+        public static bool SignatureFormatter(string strKeyPrivate, string strHashbyteSignature, ref string strEncryptedSignatureData, string HashType = "MD5")
         {
             try
             {
@@ -683,7 +700,7 @@ namespace Sample.Common.Helper
                 RSA.FromXmlString(strKeyPrivate);
                 System.Security.Cryptography.RSAPKCS1SignatureFormatter RSAFormatter = new System.Security.Cryptography.RSAPKCS1SignatureFormatter(RSA);
                 //设置签名的算法为MD5 
-                RSAFormatter.SetHashAlgorithm("MD5");
+                RSAFormatter.SetHashAlgorithm(HashType);
                 //执行签名 
                 EncryptedSignatureData = RSAFormatter.CreateSignature(HashbyteSignature);
                 strEncryptedSignatureData = Convert.ToBase64String(EncryptedSignatureData);

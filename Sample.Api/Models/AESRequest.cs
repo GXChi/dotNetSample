@@ -12,6 +12,8 @@ namespace Sample.Web.Models
         public string publicKey { get; set; }
         public HeartBeat data { get; set; }
         public string vector { get; set; }
+
+        public string data1 { get; set; }
     }
 
     public class HeartBeat

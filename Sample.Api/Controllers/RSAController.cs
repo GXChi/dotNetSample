@@ -88,13 +88,10 @@ namespace Sample.Web.Controllers
             dictionary.Add("data", "ve+DUAOwfJekg5TPhyzSqQZVYQ67QnnyLlc+qS0umOJ2/vPe63vts7VogKaQtxy7G3c5CfaEtLJ/QhNEUAXgsOQ6UM7s+se8H/Y2lcZgKWSADGQzIsVoEf+VclR20OJAxFIaQzMBjSP6lSyj5/LaEAJLSFHtIyUKDQ4sUdFtTNI=");
             //排序拼接验签数据
             var signData = RSACryption.Sort(dictionary);
-
-
-            string dataHash = "";
-            RSACryption.GetHash(signData, ref dataHash);
-
-            string sign = "";
-            RSACryption.SignatureFormatter(model.privateKey, dataHash, ref sign);
+          
+            string dataHash = RSACryption.GetHash(signData, "SHA256");
+           
+            string sign = RSACryption.CreateSignature(model.privateKey, dataHash, "SHA256");
             //var resdata = JsonHelper.JsonSerializer(model.data);
             return new { signData, sign };
         }
@@ -109,9 +106,8 @@ namespace Sample.Web.Controllers
         [Route("RSA/SignatureDeformatter")]
         [HttpPost]
         public dynamic SignatureDeformatter([FromBody] RSARequest model)
-        {
-            string dataHash = "";
-            RSACryption.GetHash(JsonHelper.JsonSerializer(model.data), ref dataHash);
+        {   
+            string dataHash = RSACryption.GetHash(JsonHelper.JsonSerializer(model.data));
             if (RSACryption.SignatureDeformatter(model.publicKey, dataHash, model.sign))
                 return "验签成功！";
             return "验签失败！";

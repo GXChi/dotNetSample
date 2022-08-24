@@ -17,16 +17,19 @@ namespace Sample.Common.Helper
         /// <param name="toEncrypt">内容</param>
         /// <param name="secretKey">秘钥</param>
         /// <returns></returns>
-        public static string AESEncrypt(string toEncrypt, string secretKey)
+        public static string AESEncrypt(string toEncrypt, string secretKey, string vector)
         {
             byte[] toEncryptArray = Encoding.UTF8.GetBytes(toEncrypt);
-            byte[] keyArray = Convert.FromBase64String(secretKey);
+            //byte[] keyArray = Convert.FromBase64String(secretKey);
+            byte[] keyArray = Encoding.UTF8.GetBytes(secretKey);
+            byte[] ivArray = Encoding.UTF8.GetBytes(vector);
             //byte[] outputb = Convert.FromBase64String("Q3xNHuj9JJu1EGQnJnzIDA==");
 
             RijndaelManaged rDel = new RijndaelManaged();
             rDel.Key = keyArray;
             rDel.Mode = CipherMode.ECB;
             rDel.Padding = PaddingMode.PKCS7;
+            rDel.IV = ivArray;
 
             ICryptoTransform cTransform = rDel.CreateEncryptor();
             byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
@@ -40,25 +43,28 @@ namespace Sample.Common.Helper
         /// <param name="toDecrypt">密文</param>
         /// <param name="secretKey">秘钥(Base64String)</param>
         /// <returns></returns>
-        public static string AESDecrypt(string toDecrypt, string secretKey)
+        public static string AESDecrypt(string toDecrypt, string secretKey, string vector)
         {
             try
             {
                 byte[] toEncryptArray = Convert.FromBase64String(toDecrypt);
-                byte[] keyArray = Convert.FromBase64String(secretKey); //128bit
+                //byte[] keyArray = Convert.FromBase64String(secretKey); //128bit
+                byte[] keyArray = Encoding.UTF8.GetBytes(secretKey);
+                byte[] ivArray = Encoding.UTF8.GetBytes(vector);
 
                 RijndaelManaged rDel = new RijndaelManaged();
                 rDel.Key = keyArray; //获取或设置对称算法的密钥
                 rDel.Mode = CipherMode.ECB; //获取或设置对称算法的运算模式，必须设置为ECB  
                 rDel.Padding = PaddingMode.PKCS7; //获取或设置对称算法中使用的填充模式，必须设置为PKCS7  
+                rDel.IV = ivArray;
                 ICryptoTransform cTransform = rDel.CreateDecryptor(); //用当前的 Key 属性和初始化向量 (IV) 建立对称解密器对象
 
                 byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
                 return Encoding.UTF8.GetString(resultArray);
             }
-            catch
+            catch (Exception ex)    
             {
-                return null;
+                return ex.ToString();
             }
         }
 
@@ -170,7 +176,7 @@ namespace Sample.Common.Helper
         /// <returns></returns>
         public static string AesEncrypt(string toEncrypt, string key, string iv)
         {
-            byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(toEncrypt);
+            byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(toEncrypt);          
             byte[] keyArray = UTF8Encoding.UTF8.GetBytes(key);//注意编码格式(utf8编码 UTF8Encoding)
             byte[] ivArray = UTF8Encoding.UTF8.GetBytes(iv);
 
@@ -178,7 +184,7 @@ namespace Sample.Common.Helper
             rDel.Key = keyArray;
             rDel.IV = ivArray;
             rDel.Mode = CipherMode.CBC;
-            //rDel.Padding = PaddingMode.Zeros;
+            //rDel.Padding = PaddingMode.None;
 
             ICryptoTransform cTransform = rDel.CreateEncryptor();//加密
             byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
@@ -194,8 +200,8 @@ namespace Sample.Common.Helper
         /// <returns></returns>
         public static string AesDecrypt(string toDecrypt, string key, string iv)
         {
-            byte[] toEncryptArray = Convert.FromBase64String(toDecrypt);
-
+            //byte[] toEncryptArray = Convert.FromBase64String(toDecrypt);
+            byte[] toEncryptArray = HexStringToHex(toDecrypt);
             byte[] keyArray = UTF8Encoding.UTF8.GetBytes(key);//注意编码格式(utf8编码 UTF8Encoding)
             byte[] ivArray = UTF8Encoding.UTF8.GetBytes(iv);
 
@@ -203,6 +209,7 @@ namespace Sample.Common.Helper
             rDel.Key = keyArray;
             rDel.IV = ivArray;
             rDel.Mode = CipherMode.CBC;
+            rDel.Padding = PaddingMode.None;
             //rDel.Padding = PaddingMode.Zeros;
 
             ICryptoTransform cTransform = rDel.CreateDecryptor();//解密
@@ -256,9 +263,10 @@ namespace Sample.Common.Helper
         /// </summary>
         /// <param name="encrypted"></param>
         /// <returns></returns>
-        public static string AesDecypt(string encrypted, string secretKey)
+        public static string AesDecypt(string encrypted, string secretKey, string vector)
         {
             byte[] keyBytes = Encoding.UTF8.GetBytes(secretKey);
+            byte[] IVBytes = Encoding.UTF8.GetBytes(vector);
 
             using (RijndaelManaged cipher = new RijndaelManaged())
             {
@@ -267,7 +275,7 @@ namespace Sample.Common.Helper
                 cipher.KeySize = 128;
                 cipher.BlockSize = 128;
                 cipher.Key = keyBytes;
-                cipher.IV = keyBytes;
+                cipher.IV = IVBytes;
 
                 List<byte> lstBytes = new List<byte>();
                 for (int i = 0; i < encrypted.Length; i += 2)
@@ -287,6 +295,21 @@ namespace Sample.Common.Helper
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 16进制转换为byte[]
+        /// </summary>
+        /// <param name="hexString"></param>
+        /// <returns></returns>
+        public static byte[] HexStringToHex(string hexString)
+        {
+            var resultantArray = new byte[hexString.Length / 2];
+            for (var i = 0; i < resultantArray.Length; i++)
+            {
+                resultantArray[i] = System.Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+            }
+            return resultantArray;
         }
 
     }

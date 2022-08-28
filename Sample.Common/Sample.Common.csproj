@@ -91,6 +91,7 @@
     <Compile Include="Helper\CacheHelper.cs" />
     <Compile Include="Helper\DateHelper.cs" />
     <Compile Include="Helper\JsonHelper.cs" />
+    <Compile Include="Helper\LogHelper.cs" />
     <Compile Include="Helper\RSA2Helper.cs" />
     <Compile Include="Helper\RSAHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-
+using System.Timers;
 using System.Web;
 
 
@@ -14,12 +13,20 @@ namespace Sample.Console
     {
         static void Main(string[] args)
         {
-            var data = "";
-            System.Console.WriteLine("1111 \r 1111");
-            System.Console.WriteLine("22222 \n 22222");
-            System.Console.WriteLine("33333 \r\n 333333");
+            //var timers = new System.Timers.Timer();
+            //timers += new ElapsedEventHandler(SayHellow);
+            //timers.Interval = 20000;
+            //timers.Enabled = true;
+            //timers.AutoReset = true;
+
+
+           
         }
 
+        private static void SayHellow(object sender, ElapsedEventArgs e)
+        {
+            System.Console.WriteLine("1111 \r\n 1111");
+        }
        
     }
 }

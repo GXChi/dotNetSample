@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sample.Common.Helper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,10 +20,12 @@ namespace Sample.Service
 
         protected override void OnStart(string[] args)
         {
+            LogHelper.WriteLog("ServiceSample", "LogInfo", "服务启动");
         }
 
         protected override void OnStop()
         {
+            LogHelper.WriteLog("ServiceSample", "LogInfo", "服务停止");
         }
     }
 }

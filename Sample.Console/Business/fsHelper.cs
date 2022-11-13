@@ -53,7 +53,7 @@ namespace Sample.Console.Business
             PropertyInfo property = t.GetType().GetProperty(propertyname);
             if (property != null)
             {
-              
+
                 if (property.PropertyType.Name == typeof(int).Name)
                 {
                     int newValue = 0;
@@ -69,7 +69,7 @@ namespace Sample.Console.Business
             }
         }
 
-      
+
 
         /// <summary>
         /// 获取属性列表
@@ -84,5 +84,37 @@ namespace Sample.Console.Business
                 System.Console.Write("name=" + info.Name + ";" + "type=" + info.PropertyType.Name + ";value=" + GetObjectPropertyValue<Object>(new object(), info.Name) + "<br />");
             }
         }
+
+        public static string GetPropertyValue<T>(T model, string fieldName)
+        {
+            Type type = typeof(T);//或者 Type type = model.GetType();
+
+            PropertyInfo property = type.GetProperty(fieldName);
+
+            if (property == null) return string.Empty;
+
+            object fieldValue = property.GetValue(model, null);
+
+            if (fieldValue == null) return string.Empty;
+
+            return fieldValue.ToString();
+        }
+
+        //public static string SetPropertyValue<T>(T model, string fieldName, object fieldValue)
+        //{
+        //    model.GetType().GetProperty(fieldName).SetValue(model, fieldValue);
+        //    Type type = typeof(T);//或者 Type type = model.GetType();
+
+        //    PropertyInfo property = type.GetProperty(fieldName);
+
+        //    if (property == null) return string.Empty;
+
+        //    object fieldValue = property.SetValue(model, fieldValue);
+
+        //    if (fieldValue == null) return string.Empty;
+
+        //    return fieldValue.ToString();
+        //}
+
     }
 }

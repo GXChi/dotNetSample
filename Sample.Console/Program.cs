@@ -84,6 +84,50 @@ namespace Sample.Console
                     }
                 }
             }
+
+            List<System_Customer_Setting> newList = new List<System_Customer_Setting>();
+            PropertyInfo[] propertys1 = rcs.GetType().GetProperties();
+            foreach (var item in propertys1)
+            {
+                var value = fsHelper.GetPropertyValue(rcs, item.Name);
+                //var value = item.GetValue(item.Name);
+                if (!string.IsNullOrEmpty(value))
+                {
+                    System_Customer_Setting scs = new System_Customer_Setting();
+                    scs.Key = item.Name;
+                    scs.Value = value.ToString();
+                    scs.Type = 0;
+                    scs.IsEnable = 0;
+                    newList.Add(scs);
+                }               
+            }
+
+            PropertyInfo[] propertys2 = scse.GetType().GetProperties();
+            foreach (var item in propertys1)
+            {
+                //var value = item.GetValue(item.Name).ToString();
+                var value = fsHelper.GetPropertyValue(scse, item.Name);
+                if (!string.IsNullOrEmpty(value))
+                {
+                    System_Customer_Setting scs = new System_Customer_Setting();
+                    scs.Key = item.Name;
+                    scs.Value = value.ToString();
+                    scs.Type = 1;
+                    scs.IsEnable = 0;
+                    newList.Add(scs);
+                }
+            }
+
+
+          
+            if (rcs.CustomerID != null)
+            {
+                rcs.GetType().GetProperty("CustomerID");
+            }
+            if (rcs.BuyerAssignType != null)
+            {
+                rcs.GetType().GetProperty("BuyerAssignType");
+            }
             System.Console.ReadKey();
         }
     }

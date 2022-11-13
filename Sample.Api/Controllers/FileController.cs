@@ -184,6 +184,7 @@ namespace Sample.Web.Controllers
 
             FileStream fileStream = new FileStream(fullPathName, FileMode.OpenOrCreate, FileAccess.Write);
             fileStream.Write(streamArray, 0, streamArray.Length);
+            //fileStream.Write(Convert.FromBase64String(base64Str), 0, Convert.FromBase64String(base64Str).Length); 待测试
             fileStream.Close();
         }
 
